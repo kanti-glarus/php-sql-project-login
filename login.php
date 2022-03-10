@@ -2,9 +2,10 @@
 
 require_once("database.php");
 
+$database = new Database();
 $login = [];
 
-if (!prepare_login()) {
+if (!$database->prepare_login()) {
     $login["success"] = false;
     $login["message"] = "Login nicht bereit.";
     echo json_encode($login);
@@ -28,8 +29,6 @@ if ($username === 'admin' && $password === '12345678') {
     return true;
 }
 $login["success"] = false;
-$login["message"] = "login nicht erfolgreich. Username oder Passwort sind falsch.";    
+$login["message"] = "login nicht erfolgreich. Username oder Passwort sind falsch.";
 echo json_encode($login);
 return false;
-
-?>

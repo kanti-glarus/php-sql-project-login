@@ -2,9 +2,10 @@
 
 include("database.php");
 
+$database = new Database();
 $register = [];
 
-if (!prepare_registration()) {
+if (!$database->prepare_registration()) {
     $register["success"] = false;
     $register["message"] = "Registrierung nicht bereit.";
     echo json_encode($register);
@@ -21,13 +22,9 @@ if (!isset($_GET['username']) || !isset($_GET['password'])) {
 $username = $_GET['username'];
 $password = $_GET['password'];
 
-register_user($username, $password);
-
-
+$database->register_user($username, $password);
 
 $register["success"] = false;
-$register["message"] = "registration nicht erfolgreich.";    
+$register["message"] = "registration nicht erfolgreich.";
 echo json_encode($register);
 return false;
-
-?>
