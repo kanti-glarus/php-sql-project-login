@@ -22,12 +22,15 @@ if (!isset($_GET['username']) || !isset($_GET['password'])) {
 $username = $_GET['username'];
 $password = $_GET['password'];
 
-if ($username === 'admin' && $password === '12345678') {
+$logged_in = $database->login_user($username, $password);
+
+if ($logged_in) {
     $login["success"] = true;
-    $login["message"] = "Login erfolgreich.";
+    $login["message"] = "login erfolgreich.";
     echo json_encode($login);
-    return true;
+    return false;
 }
+
 $login["success"] = false;
 $login["message"] = "login nicht erfolgreich. Username oder Passwort sind falsch.";
 echo json_encode($login);

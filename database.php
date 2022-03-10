@@ -79,6 +79,38 @@ class Database {
         return true;
     }
 
+    public function login_user($username, $password) {
+        try {
+            $conn = $this->create_connection();
+            $query = "SELECT * FROM `user` WHERE username = ?";
+            $statement = $conn->prepare($query);
+            $statement->execute([$username]);
+
+            $user = $statement->fetchAll(PDO::FETCH_CLASS);
+
+            if (empty($user)) {
+                return false;
+            }
+
+            // user exist, we only look at the first entry.
+            $user = $user[0];
+
+            $password_saved = $user->password;
+            if (!password_verify($password, $password_saved)) {
+                return false;
+            }
+
+            // remove the password, we don't want to transfer this anywhere.
+            unset($user->password);
+
+            return $user;
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+
+        return false;
+    }
+
     public function register_user($username, $password, $email=null) {
         // here: insert a new user into the database.
         // @todo: check if username is free.
@@ -94,5 +126,7 @@ class Database {
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
+
+        return false;
     }
 }

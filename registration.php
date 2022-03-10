@@ -22,7 +22,14 @@ if (!isset($_GET['username']) || !isset($_GET['password'])) {
 $username = $_GET['username'];
 $password = $_GET['password'];
 
-$database->register_user($username, $password);
+$registration = $database->register_user($username, $password);
+
+if ($registration) {
+    $register["success"] = true;
+    $register["message"] = "registration erfolgreich.";
+    echo json_encode($register);
+    return true;
+}
 
 $register["success"] = false;
 $register["message"] = "registration nicht erfolgreich.";
