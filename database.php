@@ -88,6 +88,10 @@ class Database {
 
             $user = $statement->fetchAll(PDO::FETCH_CLASS);
 
+            echo '<pre>';
+            var_dump($user);
+            echo '</pre>';
+
             if (empty($user)) {
                 return false;
             }
@@ -113,7 +117,21 @@ class Database {
 
     public function register_user($username, $password, $email=null) {
         // here: insert a new user into the database.
-        // @todo: check if username is free.
+        try {
+            $conn = $this->create_connection();
+            $query = "SELECT * FROM `user` WHERE username = ?";
+            $statement = $conn->prepare($query);
+            $statement->execute([$username]);
+
+            $user = $statement->fetchAll(PDO::FETCH_CLASS);
+            if (!empty($user)) {
+                return false;
+            }
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+
+        // now: save user.
         try {
             $conn = $this->create_connection();
 
@@ -127,6 +145,18 @@ class Database {
             echo $e->getMessage();
         }
 
+        return false;
+    }
+
+    public function drop_all() {
+        try {
+            $conn = $this->create_connection();
+
+            $sql = 'DROP TABLE user';
+            $conn->exec($sql);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
         return false;
     }
 }

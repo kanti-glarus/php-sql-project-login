@@ -27,6 +27,7 @@ $logged_in = $database->login_user($username, $password);
 if ($logged_in) {
     $login["success"] = true;
     $login["message"] = "login erfolgreich.";
+    $login["user"] = $logged_in;
     echo json_encode($login);
     return false;
 }

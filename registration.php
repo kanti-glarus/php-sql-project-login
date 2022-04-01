@@ -21,8 +21,9 @@ if (!isset($_GET['username']) || !isset($_GET['password'])) {
 
 $username = $_GET['username'];
 $password = $_GET['password'];
+$email = $_GET['email'];
 
-$registration = $database->register_user($username, $password);
+$registration = $database->register_user($username, $password, $email);
 
 if ($registration) {
     $register["success"] = true;
