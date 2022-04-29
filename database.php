@@ -88,10 +88,6 @@ class Database {
 
             $user = $statement->fetchAll(PDO::FETCH_CLASS);
 
-            echo '<pre>';
-            var_dump($user);
-            echo '</pre>';
-
             if (empty($user)) {
                 return false;
             }
