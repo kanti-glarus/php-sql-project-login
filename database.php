@@ -59,14 +59,55 @@ class Database {
                     register_date TIMESTAMP )";
                 // use exec() because no results are returned
                 $conn->exec($sql);
-                echo "user table created successfully";
+                echo "user table created successfully.<br>";
             } else {
-                // echo "user table already exist.";
+                echo "user table already exist.<br>";
             }
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
         $conn = null;
+    }
+
+    private function create_order_table() {
+        // here: create order table if not exist.
+        try {
+            $conn = $this->create_connection();
+            if (!$this->check_if_table_exist($conn, '`order`')) {
+                // sql to create table
+                $sql = "CREATE TABLE `order` (
+                    order_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT(11) UNSIGNED NOT NULL,
+                    price FLOAT(10),
+                    order_date TIMESTAMP
+                    )";
+                // use exec() because no results are returned
+                $conn->exec($sql);
+
+                // Add connection between order and user table.
+                $sql = "
+                    ALTER TABLE `order`  
+                    ADD CONSTRAINT `FK_order_user` 
+                        FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) 
+                            ON UPDATE CASCADE 
+                            ON DELETE CASCADE;
+                    ";
+                // use exec() because no results are returned
+                $conn->exec($sql);
+                echo "order table created and connected successfully.<br>";
+            } else {
+                echo "order table already exist.<br>";
+            }
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+        $conn = null;
+    }
+
+    public function prepare_shop() {
+        $this->create_user_table();
+        $this->create_order_table();
+        return true;
     }
 
     public function prepare_login() {
@@ -148,7 +189,14 @@ class Database {
         try {
             $conn = $this->create_connection();
 
-            $sql = 'DROP TABLE user';
+            $sql = 'ALTER TABLE `order`
+                DROP FOREIGN KEY `FK_order_user`;';
+            $conn->exec($sql);
+
+            $sql = 'DROP TABLE `user`';
+            $conn->exec($sql);
+
+            $sql = 'DROP TABLE `order`';
             $conn->exec($sql);
         } catch (PDOException $e) {
             echo $e->getMessage();
